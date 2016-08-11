@@ -1,11 +1,9 @@
 <?php
-
 /**
  * @copyright Copyright (c) 2013 2amigOS! Consulting Group LLC
  * @link http://2amigos.us
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
-
 namespace dosamigos\datetimepicker;
 
 use yii\helpers\ArrayHelper;
@@ -22,64 +20,57 @@ use yii\widgets\InputWidget;
  * @link http://www.2amigos.us/
  * @package common\extensions\widgets\datetimepicker
  */
-class DateTimePicker extends InputWidget {
-
+class DateTimePicker extends InputWidget
+{
     /**
      * @var string the language to use
      */
     public $language;
-
     /**
      * @var array the options for the Bootstrap DatePicker plugin.
      * Please refer to the Bootstrap DatePicker plugin Web page for possible options.
      * @see http://bootstrap-datepicker.readthedocs.org/en/release/options.html
      */
-    public $clientOptions    = [];
-
+    public $clientOptions = [];
     /**
      * @var array the event handlers for the underlying Bootstrap Switch 3 input JS plugin.
      * Please refer to the [DatePicker](http://bootstrap-datepicker.readthedocs.org/en/release/events.html) plugin
      * Web page for possible events.
      */
-    public $clientEvents     = [];
-
+    public $clientEvents = [];
     /**
      * @var string the size of the input ('lg', 'md', 'sm', 'xs')
      */
     public $size;
-
     /**
      * @var array HTML attributes to render on the container if its used as a component.
      */
     public $containerOptions = [];
-
     /**
      * @var string the template to render the input. By default, renders as a component, you can render a simple
      * input field without pickup and/or reset buttons by modifying the template to `{input}`. `{button}` must exist for
      * a component type of datepicker. The following template is invalid `{input}{reset}` and will be treated as `{input}`
      */
-    public $template         = "{input}{reset}{button}";
-
+    public $template = "{input}{reset}{button}";
     /**
      * @var string the icon to use on the reset button
      */
-    public $resetButtonIcon  = 'glyphicon glyphicon-remove';
-
+    public $resetButtonIcon = 'glyphicon glyphicon-remove';
     /**
      * @var string the icon to use on the pickup button. Defaults to `glyphicon-th`. Other uses are `glyphicon-time` and
      * `glyphicon-calendar`.
      */
-    public $pickButtonIcon   = 'glyphicon glyphicon-th';
-
+    public $pickButtonIcon = 'glyphicon glyphicon-th';
     /**
      * @var bool whether to render the input as an inline calendar
      */
-    public $inline           = false;
+    public $inline = false;
 
     /**
      * @inheritdoc
      */
-    public function init() {
+    public function init()
+    {
         parent::init();
 
         Html::addCssClass($this->containerOptions, 'input-group date');
@@ -106,22 +97,27 @@ class DateTimePicker extends InputWidget {
     /**
      * @inheritdoc
      */
-    public function run() {
+    public function run()
+    {
 
-        $input = $this->hasModel() ? Html::activeTextInput($this->model, $this->attribute, $this->options) : Html::textInput($this->name, $this->value, $this->options);
+        $input = $this->hasModel()
+            ? Html::activeTextInput($this->model, $this->attribute, $this->options)
+            : Html::textInput($this->name, $this->value, $this->options);
 
         if (!$this->inline) {
-            $resetIcon   = Html::tag('span', '', ['class' => $this->resetButtonIcon]);
-            $pickIcon    = Html::tag('span', '', ['class' => $this->pickButtonIcon]);
-            $resetAddon  = Html::tag('span', $resetIcon, ['class' => 'input-group-addon']);
+            $resetIcon = Html::tag('span', '', ['class' => $this->resetButtonIcon]);
+            $pickIcon = Html::tag('span', '', ['class' => $this->pickButtonIcon]);
+            $resetAddon = Html::tag('span', $resetIcon, ['class' => 'input-group-addon']);
             $pickerAddon = Html::tag('span', $pickIcon, ['class' => 'input-group-addon']);
         } else {
-            $resetAddon  = $pickerAddon = '';
+            $resetAddon = $pickerAddon = '';
         }
 
         if (strpos($this->template, '{button}') !== false || $this->inline) {
             $input = Html::tag(
-                            'div', strtr($this->template, ['{input}' => $input, '{reset}' => $resetAddon, '{button}' => $pickerAddon]), $this->containerOptions
+                'div',
+                strtr($this->template, ['{input}' => $input, '{reset}' => $resetAddon, '{button}' => $pickerAddon]),
+                $this->containerOptions
             );
         }
         echo $input;
@@ -131,22 +127,23 @@ class DateTimePicker extends InputWidget {
     /**
      * Registers required script for the plugin to work as a DateTimePicker
      */
-    public function registerClientScript() {
-        $js   = [];
+    public function registerClientScript()
+    {
+        $js = [];
         $view = $this->getView();
 
         // @codeCoverageIgnoreStart
         if ($this->language !== null) {
-            $this->clientOptions['language']                                         = $this->language;
+            $this->clientOptions['language'] = $this->language;
             DateTimePickerAsset::register(
-                            $view
-                    )->js[] = 'js/locales/bootstrap-datetimepicker.' . $this->language . '.js';
+                $view
+            )->js[] = 'js/locales/bootstrap-datetimepicker.' . $this->language . '.js';
         } else {
             DateTimePickerAsset::register($view);
         }
         // @codeCoverageIgnoreEnd
 
-        $id       = $this->options['id'];
+        $id = $this->options['id'];
         $selector = ";jQuery('#$id')";
 
         if (strpos($this->template, '{button}') !== false || $this->inline) {
@@ -172,5 +169,4 @@ class DateTimePicker extends InputWidget {
 
         $view->registerJs(implode("\n", $js));
     }
-
 }
